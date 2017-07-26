@@ -38,7 +38,7 @@ for hurricane in hurricaneList:
 		if (newlong>90 and oldlong<-90) or (oldlong>90 and newlong<-90):
 			print("over date line")
 		else:
-			map.drawLine((255,0,0,),10,oldlat,oldlong,newlat,newlong)
+			map.drawLine((255,0,0,),1,oldlat,oldlong,newlat,newlong)
 		oldlat = newlat
 		oldlong = newlong
 map = map.getSubMap(maxlat, minlong, minlat, maxlong)
