@@ -25,16 +25,13 @@ maxlat = -180
 maxlong = -90
 minlat = 180
 minlong = 90
-latArr = []
-longArr = []
+latlongDict = {}
 for hurricane in hurricaneList:
 	oldlat = hurricane.trackPoints[0].latitude
 	oldlong = hurricane.trackPoints[0].longitude
 	for point in hurricane.trackPoints:
 		newlat = point.latitude
 		newlong = point.longitude
-		latArr.append(newlat)
-		longArr.append(newlong)
 		if(newlat>maxlat):
 			maxlat = newlat
 		elif(newlat<minlat):
@@ -44,6 +41,13 @@ for hurricane in hurricaneList:
 		elif(newlong<minlong):
 			minlong = newlong
 		map.drawPoint((255,0,0),newlat,newlong)
+		
+		key = str(newlat) + ' ' + str(newlong)
+		if(key in latlongDict):
+			latlongDict[key] = latlongDict[key] + 1
+		else:
+			latlongDict[key] = 1
+	 	
 		oldlat = newlat
 		oldlong = newlong
 map = map.getSubMap(maxlat, minlong, minlat, maxlong)
@@ -51,18 +55,8 @@ map = map.getSubMap(maxlat, minlong, minlat, maxlong)
 
 #construct 2d array of all possible lat,long positions
 #then go through points and count how many are at each position
-latlong = []
-i = int((minlong+(-minlong)) * 10)
-lon = minlong
-while i<=int((maxlong+(-minlong) * 10)):
-	j = int((minlat+(-minlat)) * 10)
-	lat = minlat
-	while j<=int((maxlat+(-minlat) * 10)):
-		latlong[i].append(lat)
-		j = j + 1
-		lat = lat+ .1
-	i = i + 1
-	lon = lon + .1
+latlong = [[0]*int((maxlat-minlat) * 10) for _ in range(int(maxlong-minlong)*10)]
+
 	
 print(latlong)
  
