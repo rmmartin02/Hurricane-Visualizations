@@ -1,3 +1,4 @@
+import sys
 class TrackPoint:
 		def __init__(self, hurricane, time, nature, latitude, longitude, wind, pressure, center, trackType):
 			self.hurricane = hurricane
@@ -25,7 +26,7 @@ class Hurricane:
 		self.trackPoints.append(TrackPoint(hurricane, time, nature, latitude, longitude, wind, pressure, center, trackType))
 	
 	
-
+"""
 hurricaneList = []
 
 with open('stormdata.csv','r') as f:
@@ -34,3 +35,14 @@ with open('stormdata.csv','r') as f:
 		if(text[7] not in hurricaneList):
 			hurricaneList.append(text[7])
 	print(hurricaneList)
+"""
+timeDict = {}
+with open(sys.argv[1],'r') as f:
+	for text in f:
+		text = text.split(",")
+		text = text[6].split(" ")
+		if(text[1] not in timeDict):
+			timeDict[text[1]] = 1
+		else:
+			timeDict[text[1]] = timeDict[text[1]] + 1
+print(sorted(timeDict.items(), key=lambda x:x[1]))
