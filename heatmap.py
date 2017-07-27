@@ -22,13 +22,36 @@ with open(sys.argv[1],'r') as f:
 			tempSerNum = text[0]
 		hurricaneList[hurrNum].addTrackPoint(hurricaneList[hurrNum], text[6], text[7], float(text[8]), float(text[9]), float(text[10]), float(text[11]), text[12], text[15])
 
+#NEED TO FIX DATA (COASTLINE BIAS, TIME DIFFERENCES)
+print("Cleaning data")
+times = ['18:00:00','12:00:00','00:00:00','06:00:00']
+removed = 0
+h = 0
+while h < len(hurricaneList):
+	i = 0
+	if hurricaneList[h].season<1966 :
+		removed += len(hurricaneList[h].trackPoints)
+		del hurricaneList[h]
+	else:
+		while i < len(hurricaneList[h].trackPoints):
+			if hurricaneList[h].trackPoints[i].time[10:] not in times:
+				removed += 1
+				del hurricaneList[h].trackPoints[i]
+			else:
+				i += 1
+		if len(hurricaneList[h].trackPoints)==2:
+			removed += len(hurricaneList[h].trackPoints)
+			del hurricaneList[h]
+	h += 1
+print("Removed " + str(removed) + " points from data")
+		
 map = Map("worldMap.jpg", 90.0, -180.0, -90.0, 180.0)
 maxlat = -180
 maxlong = -90
 minlat = 180
 minlong = 90
 latlongDict = {}
-print("Constructing data structures")
+print("Constructing Map")
 for hurricane in hurricaneList:
 	oldlat = hurricane.trackPoints[0].latitude
 	oldlong = hurricane.trackPoints[0].longitude
