@@ -64,7 +64,7 @@ for key in latlongDict:
 	c = key.split(' ')
 	longlat[int((float(c[1])-minlong)*10)][int((float(c[0])-minlat)*10)] = latlongDict[key]
 	
-cfactor = 10
+cfactor = 5
 compressed = [[0]*(int(len(longlat)/cfactor)+1) for _ in range(int(len(longlat[0])/cfactor)+1)]
 max = 0
 print("Compressing data by " + str(cfactor) + "x")
@@ -97,7 +97,7 @@ plt.imsave("heatmap.png",data,format = "png", origin = 'lower',cmap = 'YlOrRd')
 print("Imposing heatmap over map")
 #impose heatmap over map image
 foreground = Image.open('heatmap.png', 'r')
-background = Image.open("worldmap.jpg")
+background = map.mapImage
 foreground = foreground.resize(background.size)
 foreground = foreground.convert("RGBA")
 background = background.convert("RGBA")
