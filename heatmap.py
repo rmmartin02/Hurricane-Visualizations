@@ -55,9 +55,36 @@ map = map.getSubMap(maxlat, minlong, minlat, maxlong)
 
 #construct 2d array of all possible lat,long positions
 #then go through points and count how many are at each position
-latlong = [[0]*int((maxlat-minlat) * 10) for _ in range(int(maxlong-minlong)*10)]
-
+longlat = [[0]*(int((maxlat-minlat) * 10)+1) for _ in range(int((maxlong-minlong)*10)+1)]
+for key in latlongDict:
+	c = key.split(' ')
+	longlat[int((float(c[1])-minlong)*10)][int((float(c[0])-minlat)*10)] = latlongDict[key]
 	
-print(latlong)
+compressed = [[0]*(int(len(longlat[0])/5)+1) for _ in range(int(len(longlat)/5)+1)]
+max = 0
+for i in range(0,len(longlat),5):
+	for j in range(0,len(longlat[0]),5):
+		sum = 0
+		for l in range(i,i+5):
+			if(l==len(longlat)):
+				break
+			for k in range(j,j+5):
+				if(k == len(longlat[0])):
+					break
+				sum += longlat[l][k]
+		if(sum>max):
+			max = sum
+		print(len(compressed),len(compressed[0]),int(i/5),int(j/5))
+		compressed[int(i/5)][int(j/5)] = sum
+
+for i in compressed:
+	for j in i:
+		j = float(j)/float(max)
+
+print(compressed)
+
+arr = np.array(compressed)
+plt.imshow(arr)
+plt.show()
  
 #https://pythonspot.com/en/generate-heatmap-in-matplotlib/
