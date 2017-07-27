@@ -17,8 +17,6 @@ class Map:
 	def getSubMap(self, latUp, longLeft, latBot, longRight):
 		coordinates = ((longLeft+180)/360, 1-((latUp+90)/180), (longRight+180)/360, 1-((latBot+90)/180))
 		box = (int(coordinates[0]*self.mapImage.size[0]),int(coordinates[1]*self.mapImage.size[1]),int(coordinates[2]*self.mapImage.size[0]),int(coordinates[3]*self.mapImage.size[1]))
-		print(coordinates)
-		print(box)
 		return Map(self.mapImage.crop(box), latUp, longLeft, latBot, longRight)
 		
 	def view(self):

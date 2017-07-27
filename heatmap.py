@@ -5,10 +5,12 @@ import matplotlib.pyplot as plt
 import sys
 from Map import Map
 from Cyclone import Hurricane, TrackPoint
+from PIL import Image
 	
 
 hurricaneList = []
 
+print("Reading data")
 with open(sys.argv[1],'r') as f:
 	tempSerNum = ""
 	hurrNum = -1
@@ -26,6 +28,7 @@ maxlong = -90
 minlat = 180
 minlong = 90
 latlongDict = {}
+print("Constructing data structures")
 for hurricane in hurricaneList:
 	oldlat = hurricane.trackPoints[0].latitude
 	oldlong = hurricane.trackPoints[0].longitude
@@ -56,40 +59,49 @@ map = map.getSubMap(maxlat, minlong, minlat, maxlong)
 #construct 2d array of all possible lat,long positions
 #then go through points and count how many are at each position
 longlat = [[0]*(int((maxlat-minlat) * 10)+1) for _ in range(int((maxlong-minlong)*10)+1)]
+print("Calculating data points")
 for key in latlongDict:
 	c = key.split(' ')
 	longlat[int((float(c[1])-minlong)*10)][int((float(c[0])-minlat)*10)] = latlongDict[key]
 	
-compressed = [[0]*(int(len(longlat)/5)+1) for _ in range(int(len(longlat[0])/5)+1)]
+cfactor = 10
+compressed = [[0]*(int(len(longlat)/cfactor)+1) for _ in range(int(len(longlat[0])/cfactor)+1)]
 max = 0
-for i in range(0,len(longlat[0]),5):
-	for j in range(0,len(longlat),5):
+print("Compressing data by " + str(cfactor) + "x")
+for i in range(0,len(longlat[0]),cfactor):
+	for j in range(0,len(longlat),cfactor):
 		sum = 0
-		for l in range(i,i+5):
+		for l in range(i,i+cfactor):
 			if(l==len(longlat[0])):
 				break
-			for k in range(j,j+5):
+			for k in range(j,j+cfactor):
 				if(k == len(longlat)):
 					break
 				sum += longlat[k][l]
 		if(sum>max):
 			max = sum
-		print(len(compressed),len(compressed[0]),int(j/5),int(i/5))
-		compressed[int(i/5)][int(j/5)] = sum
+		compressed[int(i/cfactor)][int(j/cfactor)] = sum
 
 for i in compressed:
 	for j in i:
 		j = float(j)/float(max)
 
-#print(compressed)
-
-#arr = np.array(compressed)
-#plt.imshow(arr, origin='lower')
-#plt.savefig('heatmap.png', bbox_inches='tight')
 
 #https://pythonspot.com/en/generate-heatmap-in-matplotlib/
 #https://stackoverflow.com/questions/9295026/matplotlib-plots-removing-axis-legends-and-white-spaces
 # data = mpimg.imread(inputname)[:,:,0]
+print("Plotting")
 data = np.array(compressed)
-plt.imsave("heatmap.png",data,format = "png", origin = 'lower')
+plt.imsave("heatmap.png",data,format = "png", origin = 'lower',cmap = 'YlOrRd')
+
+print("Imposing heatmap over map")
+#impose heatmap over map image
+foreground = Image.open('heatmap.png', 'r')
+background = Image.open("worldmap.jpg")
+foreground = foreground.resize(background.size)
+foreground = foreground.convert("RGBA")
+background = background.convert("RGBA")
+new_img = Image.blend(background, foreground, 0.5)
+new_img.save("test.png","PNG")
+
  
