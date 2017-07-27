@@ -1,7 +1,7 @@
 import numpy as np
 import numpy.random
 import matplotlib.pyplot as plt
-
+import matplotlib
 import sys
 from Map import Map
 from Cyclone import Hurricane, TrackPoint
@@ -64,7 +64,7 @@ for key in latlongDict:
 	c = key.split(' ')
 	longlat[int((float(c[1])-minlong)*10)][int((float(c[0])-minlat)*10)] = latlongDict[key]
 	
-cfactor = 5
+cfactor = 10
 compressed = [[0]*(int(len(longlat)/cfactor)+1) for _ in range(int(len(longlat[0])/cfactor)+1)]
 max = 0
 print("Compressing data by " + str(cfactor) + "x")
@@ -91,17 +91,34 @@ for i in compressed:
 #https://stackoverflow.com/questions/9295026/matplotlib-plots-removing-axis-legends-and-white-spaces
 # data = mpimg.imread(inputname)[:,:,0]
 print("Plotting")
+
+colormap = 'YlOrRd'
+
 data = np.array(compressed)
-plt.imsave("heatmap.png",data,format = "png", origin = 'lower',cmap = 'YlOrRd')
+plt.imsave("heatmap.png",data,format = "png", origin = 'lower',cmap = colormap)
 
 print("Imposing heatmap over map")
 #impose heatmap over map image
-foreground = Image.open('heatmap.png', 'r')
-background = map.mapImage
-foreground = foreground.resize(background.size)
-foreground = foreground.convert("RGBA")
-background = background.convert("RGBA")
-new_img = Image.blend(background, foreground, 0.5)
-new_img.save("test.png","PNG")
+top = Image.open('heatmap.png')
+bottom = map.mapImage
+top = top.convert("RGBA")
+top.putalpha(128)
+datas = top.getdata()
 
+newData = []
+colormap = matplotlib.cm.get_cmap(colormap)
+rgba = colormap(0.0)
+rgba = (int(rgba[0]*255),int(rgba[1]*255),int(rgba[2]*255),int(rgba[3]*255))
+for item in datas:
+	if item[0] == rgba[0] and item[1] == rgba[1] and item[2] == rgba[2]:
+		newData.append((255, 255, 255, 0))
+	else:
+		newData.append(item)
+
+top.putdata(newData)
+bottom = bottom.convert("RGBA")
+bottom.putalpha(255)
+top = top.resize(bottom.size)
+final = Image.alpha_composite(bottom, top)
+final.show()
  
