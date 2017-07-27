@@ -60,31 +60,36 @@ for key in latlongDict:
 	c = key.split(' ')
 	longlat[int((float(c[1])-minlong)*10)][int((float(c[0])-minlat)*10)] = latlongDict[key]
 	
-compressed = [[0]*(int(len(longlat[0])/5)+1) for _ in range(int(len(longlat)/5)+1)]
+compressed = [[0]*(int(len(longlat)/5)+1) for _ in range(int(len(longlat[0])/5)+1)]
 max = 0
-for i in range(0,len(longlat),5):
-	for j in range(0,len(longlat[0]),5):
+for i in range(0,len(longlat[0]),5):
+	for j in range(0,len(longlat),5):
 		sum = 0
 		for l in range(i,i+5):
-			if(l==len(longlat)):
+			if(l==len(longlat[0])):
 				break
 			for k in range(j,j+5):
-				if(k == len(longlat[0])):
+				if(k == len(longlat)):
 					break
-				sum += longlat[l][k]
+				sum += longlat[k][l]
 		if(sum>max):
 			max = sum
-		print(len(compressed),len(compressed[0]),int(i/5),int(j/5))
+		print(len(compressed),len(compressed[0]),int(j/5),int(i/5))
 		compressed[int(i/5)][int(j/5)] = sum
 
 for i in compressed:
 	for j in i:
 		j = float(j)/float(max)
 
-print(compressed)
+#print(compressed)
 
-arr = np.array(compressed)
-plt.imshow(arr)
-plt.show()
- 
+#arr = np.array(compressed)
+#plt.imshow(arr, origin='lower')
+#plt.savefig('heatmap.png', bbox_inches='tight')
+
 #https://pythonspot.com/en/generate-heatmap-in-matplotlib/
+#https://stackoverflow.com/questions/9295026/matplotlib-plots-removing-axis-legends-and-white-spaces
+# data = mpimg.imread(inputname)[:,:,0]
+data = np.array(compressed)
+plt.imsave("heatmap.png",data,format = "png", origin = 'lower')
+ 
