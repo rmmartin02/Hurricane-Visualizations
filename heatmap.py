@@ -27,23 +27,21 @@ print("Cleaning data")
 times = ['18:00:00','12:00:00','00:00:00','06:00:00']
 removed = 0
 h = 0
+print(len(hurricaneList))
 while h < len(hurricaneList):
-	i = 0
-	if hurricaneList[h].season<1966 :
-		removed += len(hurricaneList[h].trackPoints)
+	t = 0
+	while t < len(hurricaneList[h].trackPoints):
+		if hurricaneList[h].trackPoints[t].time[10:] not in times:
+			removed += 1
+			del hurricaneList[h].trackPoints[t]
+		else:
+			t = t+1
+	if len(hurricaneList[h].trackPoints) == 0:
 		del hurricaneList[h]
 	else:
-		while i < len(hurricaneList[h].trackPoints):
-			if hurricaneList[h].trackPoints[i].time[10:] not in times:
-				removed += 1
-				del hurricaneList[h].trackPoints[i]
-			else:
-				i += 1
-		if len(hurricaneList[h].trackPoints)==2:
-			removed += len(hurricaneList[h].trackPoints)
-			del hurricaneList[h]
-	h += 1
+		h = h + 1
 print("Removed " + str(removed) + " points from data")
+print(len(hurricaneList))
 		
 map = Map("worldMap.jpg", 90.0, -180.0, -90.0, 180.0)
 maxlat = -180
@@ -53,29 +51,25 @@ minlong = 90
 latlongDict = {}
 print("Constructing Map")
 for hurricane in hurricaneList:
-	oldlat = hurricane.trackPoints[0].latitude
-	oldlong = hurricane.trackPoints[0].longitude
 	for point in hurricane.trackPoints:
-		newlat = point.latitude
-		newlong = point.longitude
-		if(newlat>maxlat):
-			maxlat = newlat
-		elif(newlat<minlat):
-			minlat = newlat
-		if(newlong>maxlong):
-			maxlong = newlong
-		elif(newlong<minlong):
-			minlong = newlong
-		map.drawPoint((255,0,0),newlat,newlong)
+		lat = point.latitude
+		lon = point.longitude
+		if(lat>maxlat):
+			maxlat = lat
+		elif(lat<minlat):
+			minlat = lat
+		if(lon>maxlong):
+			maxlong = lon
+		elif(lon<minlong):
+			minlong = lon
+		map.drawPoint((255,0,0),lat,lon)
 		
-		key = str(newlat) + ' ' + str(newlong)
+		key = str(lat) + ' ' + str(lon)
 		if(key in latlongDict):
 			latlongDict[key] = latlongDict[key] + 1
 		else:
 			latlongDict[key] = 1
-	 	
-		oldlat = newlat
-		oldlong = newlong
+print(len(latlongDict))
 map = map.getSubMap(maxlat, minlong, minlat, maxlong)
 #map.view()
 
@@ -87,7 +81,7 @@ for key in latlongDict:
 	c = key.split(' ')
 	longlat[int((float(c[1])-minlong)*10)][int((float(c[0])-minlat)*10)] = latlongDict[key]
 	
-cfactor = 10
+cfactor = 4
 compressed = [[0]*(int(len(longlat)/cfactor)+1) for _ in range(int(len(longlat[0])/cfactor)+1)]
 max = 0
 print("Compressing data by " + str(cfactor) + "x")
@@ -112,7 +106,6 @@ for i in compressed:
 
 #https://pythonspot.com/en/generate-heatmap-in-matplotlib/
 #https://stackoverflow.com/questions/9295026/matplotlib-plots-removing-axis-legends-and-white-spaces
-# data = mpimg.imread(inputname)[:,:,0]
 print("Plotting")
 
 colormap = 'YlOrRd'

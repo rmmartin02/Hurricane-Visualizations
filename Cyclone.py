@@ -9,6 +9,7 @@ class TrackPoint:
 			self.pressure = pressure
 			self.center = center
 			self.trackType = trackType
+    
 
 class Hurricane:
 
