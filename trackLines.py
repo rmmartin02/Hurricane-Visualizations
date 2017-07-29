@@ -30,7 +30,7 @@ while h < len(hurricaneList):
 			del hurricaneList[h].trackPoints[t]
 		else:
 			t = t+1
-	if len(hurricaneList[h].trackPoints) == 0:
+	if len(hurricaneList[h].trackPoints) == 0 or hurricaneList[h].trackPoints[0].time[5:7]!='08':
 		del hurricaneList[h]
 	else:
 		h = h + 1

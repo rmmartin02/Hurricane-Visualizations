@@ -9,6 +9,7 @@ from PIL import Image
 	
 
 hurricaneList = []
+cfactor = int(sys.argv[2])
 
 print("Reading data")
 with open(sys.argv[1],'r') as f:
@@ -31,12 +32,13 @@ print(len(hurricaneList))
 while h < len(hurricaneList):
 	t = 0
 	while t < len(hurricaneList[h].trackPoints):
-		if hurricaneList[h].trackPoints[t].time[10:] in times or hurricaneList[h].trackPoints[t].wind<0.0:
+	#hurricaneList[h].trackPoints[t].time[10:] not in times or 
+		if t!=0:
 			removed += 1
 			del hurricaneList[h].trackPoints[t]
 		else:
 			t = t+1
-	if len(hurricaneList[h].trackPoints) == 0:
+	if len(hurricaneList[h].trackPoints) == 0 or hurricaneList[h].trackPoints[0].time[5:7]!='07':
 		del hurricaneList[h]
 	else:
 		h = h + 1
@@ -48,7 +50,7 @@ maxlat = -180
 maxlong = -90
 minlat = 180
 minlong = 90
-latlongDict = {}
+countsDict = {}
 print("Constructing Map")
 for hurricane in hurricaneList:
 	for point in hurricane.trackPoints:
@@ -65,36 +67,66 @@ for hurricane in hurricaneList:
 		map.drawPoint((255,0,0),lat,lon)
 		
 		key = str(lat) + ' ' + str(lon)
-		if(key in latlongDict):
-			latlongDict[key] = latlongDict[key] + 1
+		if(key in countsDict):
+			countsDict[key] = countsDict[key] + 1
 		else:
-			latlongDict[key] = 1
-print(len(latlongDict))
-map = map.getSubMap(maxlat, minlong, minlat, maxlong)
+			countsDict[key] = 1
+print(len(countsDict))
+
+#trying to fix slight mismatch between heatmap and map by making sure map coords divisible by cfactor
 #map.view()
+
+maxlat += .1
+maxlong += .1
+print(maxlat, minlat, maxlong, minlong)
+print(((maxlat-minlat)*10)%cfactor, ((maxlong-minlong)*10)%cfactor)
+if not ((maxlat-minlat)*10)%cfactor == 0:
+	if (maxlat + (cfactor - (((maxlat-minlat)*10)%cfactor))*.1)!=90.0:
+		print('increase max lat')
+		maxlat = maxlat + (cfactor - (((maxlat-minlat)*10)%cfactor))*.1
+	elif (minlat - (((maxlat-minlat)*10)%cfactor)*.1)!=-90.0:
+		print('decrease min lat')
+		minlat = minlat - (((maxlat-minlat)*10)%cfactor)*.1
+	else:
+		print('decrease max lat')
+		maxlat = maxlat - (((maxlat-minlat)*10)%cfactor)*.1
+if not ((maxlong-minlong)*10)%cfactor == 0:
+	if (maxlong + (cfactor - (((maxlong-minlong)*10)%cfactor))*.1)!=90.0:
+		print('increase max long')
+		maxlong = maxlong + (cfactor - (((maxlong-minlong)*10)%cfactor))*.1
+	elif (minlong - (((maxlong-minlong)*10)%cfactor)*.1)!=-90.0:
+		print("decrease min long")
+		minlong = minlong - (((maxlong-minlong)*10)%cfactor)*.1
+	else:
+		print("decrease max long")
+		maxlong = maxlong - (((maxlong-minlong)*10)%cfactor)*.1
+map = map.getSubMap(maxlat, minlong, minlat, maxlong)	
+print(((maxlat-minlat)*10)%cfactor, ((maxlong-minlong)*10)%cfactor)
+print(maxlat,minlat,maxlong,minlong)
 
 #construct 2d array of all possible lat,long positions
 #then go through points and count how many are at each position
-longlat = [[0]*(int((maxlat-minlat) * 10)+1) for _ in range(int((maxlong-minlong)*10)+1)]
+print(int(round((maxlong-minlong)*10)),int(round((maxlat-minlat)*10)))
+counts = [[0]*(int(round((maxlong-minlong)*10))) for _ in range(int(round((maxlat-minlat)*10)))]
 print("Calculating data points")
-for key in latlongDict:
+for key in countsDict:
 	c = key.split(' ')
-	longlat[int((float(c[1])-minlong)*10)][int((float(c[0])-minlat)*10)] = latlongDict[key]
+	lat = float(c[0])
+	long = float(c[1])
+	if (lat<=maxlat and lat>=minlat) and (long<=maxlong and long>=minlong):
+		counts[int((lat-minlat)*10)][int((long-minlong)*10)] = countsDict[key]
 	
-cfactor = int(sys.argv[2])
-compressed = [[0]*(int(len(longlat)/cfactor)+1) for _ in range(int(len(longlat[0])/cfactor)+1)]
+compressed = [[0]*(int(len(counts[0])/cfactor)) for _ in range(int(len(counts)/cfactor))]
+print(len(counts),len(counts[0]))
+print(len(compressed),len(compressed[0]))
 max = 0
 print("Compressing data by " + str(cfactor) + "x")
-for i in range(0,len(longlat[0]),cfactor):
-	for j in range(0,len(longlat),cfactor):
+for i in range(0,len(counts),cfactor):
+	for j in range(0,len(counts[0]),cfactor):
 		sum = 0
 		for l in range(i,i+cfactor):
-			if(l==len(longlat[0])):
-				break
 			for k in range(j,j+cfactor):
-				if(k == len(longlat)):
-					break
-				sum += longlat[k][l]
+				sum += counts[l][k]
 		if(sum>max):
 			max = sum
 		compressed[int(i/cfactor)][int(j/cfactor)] = sum
@@ -137,4 +169,6 @@ bottom.putalpha(255)
 top = top.resize(bottom.size)
 final = Image.alpha_composite(bottom, top)
 final.show()
+if len(sys.argv)>3:
+	final.save("visuals/"+sys.argv[3])
  
