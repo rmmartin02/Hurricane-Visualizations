@@ -31,7 +31,7 @@ print(len(hurricaneList))
 while h < len(hurricaneList):
 	t = 0
 	while t < len(hurricaneList[h].trackPoints):
-		if hurricaneList[h].trackPoints[t].time[10:] not in times:
+		if hurricaneList[h].trackPoints[t].time[10:] in times or hurricaneList[h].trackPoints[t].wind<0.0:
 			removed += 1
 			del hurricaneList[h].trackPoints[t]
 		else:
@@ -43,7 +43,7 @@ while h < len(hurricaneList):
 print("Removed " + str(removed) + " points from data")
 print(len(hurricaneList))
 		
-map = Map("worldMap.jpg", 90.0, -180.0, -90.0, 180.0)
+map = Map("images/worldMap.jpg", 90.0, -180.0, -90.0, 180.0)
 maxlat = -180
 maxlong = -90
 minlat = 180
@@ -81,7 +81,7 @@ for key in latlongDict:
 	c = key.split(' ')
 	longlat[int((float(c[1])-minlong)*10)][int((float(c[0])-minlat)*10)] = latlongDict[key]
 	
-cfactor = 4
+cfactor = int(sys.argv[2])
 compressed = [[0]*(int(len(longlat)/cfactor)+1) for _ in range(int(len(longlat[0])/cfactor)+1)]
 max = 0
 print("Compressing data by " + str(cfactor) + "x")
@@ -111,11 +111,11 @@ print("Plotting")
 colormap = 'YlOrRd'
 
 data = np.array(compressed)
-plt.imsave("heatmap.png",data,format = "png", origin = 'lower',cmap = colormap)
+plt.imsave("images/heatmap.png",data,format = "png", origin = 'lower',cmap = colormap)
 
 print("Imposing heatmap over map")
 #impose heatmap over map image
-top = Image.open('heatmap.png')
+top = Image.open('images/heatmap.png')
 bottom = map.mapImage
 top = top.convert("RGBA")
 top.putalpha(128)

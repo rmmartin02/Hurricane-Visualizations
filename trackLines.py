@@ -16,7 +16,28 @@ with open(sys.argv[1],'r') as f:
 			tempSerNum = text[0]
 		hurricaneList[hurrNum].addTrackPoint(hurricaneList[hurrNum], text[6], text[7], float(text[8]), float(text[9]), float(text[10]), float(text[11]), text[12], text[15])
 
-map = Map("worldMap.jpg", 90.0, -180.0, -90.0, 180.0)
+#NEED TO FIX DATA (COASTLINE BIAS, TIME DIFFERENCES)
+print("Cleaning data")
+times = ['18:00:00','12:00:00','00:00:00','06:00:00']
+removed = 0
+h = 0
+print(len(hurricaneList))
+while h < len(hurricaneList):
+	t = 0
+	while t < len(hurricaneList[h].trackPoints):
+		if hurricaneList[h].trackPoints[t].wind<0.0:
+			removed += 1
+			del hurricaneList[h].trackPoints[t]
+		else:
+			t = t+1
+	if len(hurricaneList[h].trackPoints) == 0:
+		del hurricaneList[h]
+	else:
+		h = h + 1
+print("Removed " + str(removed) + " points from data")
+print(len(hurricaneList))
+		
+map = Map("images\worldMap.jpg", 90.0, -180.0, -90.0, 180.0)
 maxlat = -180
 maxlong = -90
 minlat = 180
