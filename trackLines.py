@@ -3,18 +3,7 @@ from Map import Map
 from Cyclone import Hurricane, TrackPoint
 	
 
-hurricaneList = []
-
-with open(sys.argv[1],'r') as f:
-	tempSerNum = ""
-	hurrNum = -1
-	for text in f:
-		text = text.replace(" ","").split(",")
-		if(text[0] != tempSerNum):
-			hurrNum += 1
-			hurricaneList.append(Hurricane(text[0], int(text[1]), int(text[2]), text[3], text[4], text[5]))
-			tempSerNum = text[0]
-		hurricaneList[hurrNum].addTrackPoint(hurricaneList[hurrNum], text[6], text[7], float(text[8]), float(text[9]), float(text[10]), float(text[11]), text[12], text[15])
+hurricaneList = Hurricane.readData(sys.argv[1])
 
 #NEED TO FIX DATA (COASTLINE BIAS, TIME DIFFERENCES)
 print("Cleaning data")
@@ -25,12 +14,13 @@ print(len(hurricaneList))
 while h < len(hurricaneList):
 	t = 0
 	while t < len(hurricaneList[h].trackPoints):
-		if hurricaneList[h].trackPoints[t].wind<0.0:
+		if hurricaneList[h].trackPoints[t].time[10:] not in times:
 			removed += 1
 			del hurricaneList[h].trackPoints[t]
 		else:
 			t = t+1
-	if len(hurricaneList[h].trackPoints) == 0 or hurricaneList[h].trackPoints[0].time[5:7]!='08':
+	# or hurricaneList[h].trackPoints[0].time[5:7]!='08'
+	if len(hurricaneList[h].trackPoints) == 0:
 		del hurricaneList[h]
 	else:
 		h = h + 1

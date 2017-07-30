@@ -12,33 +12,27 @@ hurricaneList = []
 cfactor = int(sys.argv[2])
 
 print("Reading data")
-with open(sys.argv[1],'r') as f:
-	tempSerNum = ""
-	hurrNum = -1
-	for text in f:
-		text = text.replace(" ","").split(",")
-		if(text[0] != tempSerNum):
-			hurrNum += 1
-			hurricaneList.append(Hurricane(text[0], int(text[1]), int(text[2]), text[3], text[4], text[5]))
-			tempSerNum = text[0]
-		hurricaneList[hurrNum].addTrackPoint(hurricaneList[hurrNum], text[6], text[7], float(text[8]), float(text[9]), float(text[10]), float(text[11]), text[12], text[15])
+hurricaneList = Hurricane.readData(sys.argv[1])
 
-#NEED TO FIX DATA (COASTLINE BIAS, TIME DIFFERENCES)
 print("Cleaning data")
+#remove landfall bias and adjust data
 times = ['18:00:00','12:00:00','00:00:00','06:00:00']
 removed = 0
 h = 0
 print(len(hurricaneList))
 while h < len(hurricaneList):
 	t = 0
+	#delHur = hurricaneList[h].season<1966
+	delHur = False
 	while t < len(hurricaneList[h].trackPoints):
-	#hurricaneList[h].trackPoints[t].time[10:] not in times or 
-		if t!=0:
+	#t!=0
+		if hurricaneList[h].trackPoints[t].time[10:] not in times:
 			removed += 1
 			del hurricaneList[h].trackPoints[t]
 		else:
 			t = t+1
-	if len(hurricaneList[h].trackPoints) == 0 or hurricaneList[h].trackPoints[0].time[5:7]!='07':
+	#or hurricaneList[h].trackPoints[0].time[5:7]!='07'
+	if len(hurricaneList[h].trackPoints) == 0 or delHur:
 		del hurricaneList[h]
 	else:
 		h = h + 1
@@ -74,8 +68,6 @@ for hurricane in hurricaneList:
 print(len(countsDict))
 
 #trying to fix slight mismatch between heatmap and map by making sure map coords divisible by cfactor
-#map.view()
-
 maxlat += .1
 maxlong += .1
 print(maxlat, minlat, maxlong, minlong)
@@ -116,6 +108,7 @@ for key in countsDict:
 	if (lat<=maxlat and lat>=minlat) and (long<=maxlong and long>=minlong):
 		counts[int((lat-minlat)*10)][int((long-minlong)*10)] = countsDict[key]
 	
+#compress data so that it looks better on heatmap
 compressed = [[0]*(int(len(counts[0])/cfactor)) for _ in range(int(len(counts)/cfactor))]
 print(len(counts),len(counts[0]))
 print(len(compressed),len(compressed[0]))
@@ -168,7 +161,8 @@ bottom = bottom.convert("RGBA")
 bottom.putalpha(255)
 top = top.resize(bottom.size)
 final = Image.alpha_composite(bottom, top)
-final.show()
 if len(sys.argv)>3:
 	final.save("visuals/"+sys.argv[3])
+else:
+	final.show()
  

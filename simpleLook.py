@@ -36,6 +36,7 @@ with open('stormdata.csv','r') as f:
 			hurricaneList.append(text[7])
 	print(hurricaneList)
 """
+"""
 timeDict = {}
 with open(sys.argv[1],'r') as f:
 	for text in f:
@@ -46,3 +47,13 @@ with open(sys.argv[1],'r') as f:
 		else:
 			timeDict[text[1]] = timeDict[text[1]] + 1
 print(sorted(timeDict.items(), key=lambda x:x[1]))
+"""
+basinDict = {}
+with open(sys.argv[1],'r') as f:
+	for text in f:
+		text = text.split(",")
+		if(text[3] not in basinDict):
+			basinDict[text[3]] = 1
+		else:
+			basinDict[text[3]] = basinDict[text[3]] + 1
+print(sorted(basinDict.items(), key=lambda x:x[1]))
