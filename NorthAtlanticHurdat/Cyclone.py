@@ -80,6 +80,12 @@ class Hurricane:
 	
 	def readData(data):
 		hurricaneList = []
+		f = open( '/tmp/xferlog' , 'r' )
+		line = f.readline()
+		while line :
+			print line
+			line = f.readline()
+		f.close()
 		with open(data,'r') as f:
 			tempSerNum = ""
 			hurrNum = -1
