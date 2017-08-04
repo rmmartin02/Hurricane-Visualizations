@@ -43,3 +43,9 @@ class Map:
 		line.append(coords2)
 		d = ImageDraw.Draw(self.mapImage)
 		d.line(line,fill=color, width=wid)
+	
+	def drawSquare(self,color,size,lat,long):
+		coords = self.latLongToPixelCoord(lat, long)
+		d = ImageDraw.Draw(self.mapImage)
+		dist = size//2
+		d.rectangle([coords[0]-dist,coords[1]+dist,coords[0]+dist,coords[1]-dist],fill=color)
