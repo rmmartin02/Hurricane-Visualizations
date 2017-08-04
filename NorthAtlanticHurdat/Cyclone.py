@@ -2,17 +2,31 @@ class TrackPoint:
 
 		Colors = {'ET' : (170,170,170),'TD' : (28,84,255),'TS' : (109,195,67),'C1' : (255,195,9),'C2' : (255,115,9),'C3' : (232,59,12),'C4' : (232,12,174),'C5' : (189,0,255)}
 		
-		def __init__(self, hurricane, time, nature, latitude, longitude, wind, pressure, center, trackType, currentBasin):
+		def __init__(self, hurricane, year, month, day, hour, minute, recordID, status, latitude, longitude, wind, pressure, ne34, se34, sw34, nw34, ne50, se50, sw50, nw50, ne64, se64, sw64, nw64):
 			self.hurricane = hurricane
-			self.time = time
-			self.nature = nature
+			self.year = year
+			self.month = year
+			self.day = day
+			self.hour = hour
+			self.minute = minute
+			self.recordID = recordID
+			self.status = status
 			self.latitude = latitude
 			self.longitude = longitude
 			self.wind = wind
 			self.pressure = pressure
-			self.center = center
-			self.trackType = trackType
-			self.currentBasin = currentBasin
+			self.ne34 = ne34
+			self.se34 = se34
+			self.sw34 = sw34
+			self.nw34 = nw34
+			self.ne50 = ne50
+			self.se50 = se50
+			self.sw50 = sw50
+			self.nw50 = nw50
+			self.ne64 = ne64
+			self.se64 = se64
+			self.sw64 = sw64
+			self.nw64 = nw64
 		
 		def getColor(self):
 			if (self.nature == "ET"):
@@ -44,17 +58,16 @@ class TrackPoint:
 
 class Hurricane:
 
-	def __init__(self, serialNumber, season, num, basin, subBasin, name):
-		self.serialNumber = serialNumber
-		self.season = season
-		self.num = num
+	def __init__(self, basin, num, season, name, numPoints):
 		self.basin = basin
-		self.subBasin = subBasin
+		self.num = num
+		self.season = season
 		self.name = name
+		self.numPoints = numPoints
 		self.trackPoints = []
 		
-	def addTrackPoint(self, hurricane, time, nature, latitude, longitude, wind, pressure, center, trackType, currentBasin):
-		self.trackPoints.append(TrackPoint(hurricane, time, nature, latitude, longitude, wind, pressure, center, trackType, currentBasin))
+	def addTrackPoint(self, year, month, day, hour, minute, recordID, status, latitude, longitude, wind, pressure, ne34, se34, sw34, nw34, ne50, se50, sw50, nw50, ne64, se64, sw64, nw64):
+		self.trackPoints.append(TrackPoint(self, year, month, day, hour, minute, recordID, status, latitude, longitude, wind, pressure, ne34, se34, sw34, nw34, ne50, se50, sw50, nw50, ne64, se64, sw64, nw64))
 	
 	def getMaxWind(self):
 		max = 0
@@ -80,31 +93,39 @@ class Hurricane:
 	
 	def readData(data):
 		hurricaneList = []
-		f = open( '/tmp/xferlog' , 'r' )
+		f = open(data, 'r' )
 		line = f.readline()
+		hurrNum = -1
 		while line :
-			print line
+			text = line.split(',')
+			if len(text) < 10:
+				hurrNum += 1
+				hurricaneList.append(Hurricane(text[0][:2],int(text[0][2:4]),int(text[0][4:]),text[1],int(text[2])))
+			else:
+				year = int(text[0][:4])
+				month = int(text[0][4:6])
+				day = int(text[0][6:8])
+				hour = int(text[1][:2])
+				minute = int(text[1][2:])
+				recordID = text[2]
+				status = text[3]
+				latitude = float(text[4])
+				longitude = float(text[5])
+				wind = int(text[6])
+				pressure = int(text[7])
+				ne34 = int(text[8])
+				se34 = int(text[9])
+				sw34 = int(text[10])
+				nw34 = int(text[11])
+				ne50 = int(text[12])
+				se50 = int(text[13])
+				sw50 = int(text[14])
+				nw50 = int(text[15])
+				ne64 = int(text[16])
+				se64 = int(text[17])
+				sw64 = int(text[18])
+				nw64 = int(text[19])
+				hurricaneList[hurrNum].addTrackPoint(year, month, day, hour, minute, recordID, status, latitude, longitude, wind, pressure, ne34, se34, sw34, nw34, ne50, se50, sw50, nw50, ne64, se64, sw64, nw64)
 			line = f.readline()
 		f.close()
-		with open(data,'r') as f:
-			tempSerNum = ""
-			hurrNum = -1
-			for text in f:
-				text = text.replace(" ","").split(",")
-				if(text[0] != tempSerNum):
-					hurrNum += 1
-					#serialNumber, season, num, basin, subBasin, name
-					hurricaneList.append(Hurricane(text[0], int(text[1]), int(text[2]), text[3], text[4], text[5]))
-					tempSerNum = text[0]
-				#hurricane, time, nature, latitude, longitude, wind, pressure, center, trackType
-				time = text[6]
-				nature = text[7]
-				latitude = float(text[8])
-				longitude = float(text[9])
-				wind = float(text[10])
-				pressure = float(text[11])
-				center =  text[12]
-				trackType = text[13]
-				currentBasin = text[14]
-				hurricaneList[hurrNum].addTrackPoint(hurricaneList[hurrNum], time, nature, latitude, longitude, wind, pressure, center, trackType, currentBasin)
 		return hurricaneList
