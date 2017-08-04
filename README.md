@@ -1,7 +1,6 @@
 # Hurricane-Visualizations
 I enjoy watching the weather, analyzing data, and looking at pretty pictures, so I though I'd start this project.
-
-![Alt text](/AllStorms/images/TrackLines/AllTrackLines.jpg "All Track Lines")
+<img src="https://github.com/rmmartin02/Hurricane-Visualizations/blob/master/AllStorms/images/TrackLines/AllTrackLines.jpg?raw=true" alt="All Track Lines" width="1000px">
 
 ## All Storms
 This is for data from the IBTrACS-All which includes basically every peice of tropical cyclone data from around the globe.
@@ -16,9 +15,9 @@ Much of the data before the 1960s is from ships, aircraft, and weather stations.
 Can edit heatmap.py to look at all sorts of different data. It takes it and maps it on the worldMap image provided. Data needs to be compressed by some factor, otherwise it is too spread out. Can also look at basins separately.
 This image is a heatmap of the accumulated cyclone energy (wind*wind/100000) for storms with winds >34kt
 Command Looks like: python heatmaps.py data/all.csv 16 images/heatmaps/ACE.jpg
-![Alt text](/AllStorms/images/Heatmaps/ACEHeatmap.jpg "ACE of all storms")
+<img src="https://github.com/rmmartin02/Hurricane-Visualizations/blob/master/AllStorms/images/Heatmaps/ACEHeatmap.jpg?raw=true" alt="ACE heatmap" width="1000px">
 
 ### Track Maps
 Can edit trackLines.py to look at all differnt sorts of tracks. Takes points and connects them on map. Can also color lines based on intensity.
 Command Looks like: python trackLines.py data/all.csv images/tracklines/intensity.jpg
-![Alt text](/AllStorms/images/TrackLines/AllTracksIntensity.jpg "Track lines for all storms")
+<img src="https://github.com/rmmartin02/Hurricane-Visualizations/blob/master/AllStorms/images/TrackLines/AllTracksIntensity.jpg?raw=true" alt="Intensity Track Lines" width="1000px">
