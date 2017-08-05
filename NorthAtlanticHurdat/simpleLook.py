@@ -22,6 +22,7 @@ while line :
 f.close()
 print(list)
 """
+"""
 hurricaneList = Hurricane.readData('hurdatFixed.csv')
 times = {}
 for h in hurricaneList:
@@ -31,3 +32,15 @@ for h in hurricaneList:
 		else:
 			times[p.time] = times[p.time] + 1
 print(sorted(times.items(), key=lambda x:x[1]))
+"""
+hurricaneList = Hurricane.readData('hurdatFixed.csv')
+land = {}
+for h in hurricaneList:
+	for p in h.trackPoints:
+		if p.recordID == 'L':
+			ser = str(h.basin) + str(h.num) + str(h.season)
+			if ser in land:
+				land[ser] = land[ser]+1
+			else:
+				land[ser] = 1
+print(sorted(land.items(), key=lambda x:x[1]))

@@ -27,9 +27,9 @@ while h < len(hurricaneList):
 	while t < len(hurricaneList[h].trackPoints):
 	#t!=0
 		# or hurricaneList[h].trackPoints[t].pressure>900 or hurricaneList[h].trackPoints[t].pressure<800
-		# 
-		#hurricaneList[h].trackPoints[t].time not in times
-		if hurricaneList[h].trackPoints[t].recordID != 'L' or hurricaneList[h].trackPoints[t].wind<96.0:
+		# hurricaneList[h].trackPoints[t].recordID != 'L' or 
+		#
+		if hurricaneList[h].trackPoints[t].time not in times or hurricaneList[h].trackPoints[t].wind<=0.0:
 			removed += 1
 			del hurricaneList[h].trackPoints[t]
 		else:
@@ -109,7 +109,7 @@ print("Calculating data points")
 for h in hurricaneList:
 	for p in h.trackPoints:
 		try:
-			counts[int(round((p.latitude-minlat)*10))][int(round((p.longitude-minlong)*10))] = counts[int(round((p.latitude-minlat)*10))][int(round((p.longitude-minlong)*10))] + 1
+			counts[int(round((p.latitude-minlat)*10))][int(round((p.longitude-minlong)*10))] = counts[int(round((p.latitude-minlat)*10))][int(round((p.longitude-minlong)*10))] + ((p.wind*p.wind)/10000)
 		except IndexError:
 			aasdlkjfbakvl = 1
 #compress data so that it looks better on heatmap

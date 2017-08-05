@@ -94,6 +94,22 @@ class Hurricane:
 				return True
 		return False
 	
+	def getLandfalls(self):
+		land = []
+		for p in self.trackPoints:
+			if p.recordID == 'L':
+				land.append(p)
+		return land
+		
+	def getStrongestLandfall(self):
+		max = 0
+		maxP = None
+		for p in self.getLandfalls():
+			if p.wind>max:
+				max = p.wind
+				maxP = p
+		return maxP
+	
 	def readData(data):
 		hurricaneList = []
 		f = open(data, 'r' )

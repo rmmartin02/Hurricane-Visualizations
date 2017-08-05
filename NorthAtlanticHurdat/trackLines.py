@@ -14,8 +14,9 @@ print(len(hurricaneList))
 while h < len(hurricaneList):
 	t = 0
 	#164 is "cat 6"
-	hurDel = hurricaneList[h].didLandfall()
-	#hurDel = False
+	hurDel = True
+	if hurricaneList[h].didLandfall() and hurricaneList[h].getStrongestLandfall().wind>=64.0:
+		hurDel =  False
 	while t < len(hurricaneList[h].trackPoints):
 		#hurricaneList[h].trackPoints[t].time[10:] not in times
 		#hurricaneList[h].trackPoints[t].pressure>900 or hurricaneList[h].trackPoints[t].pressure<800
@@ -25,7 +26,7 @@ while h < len(hurricaneList):
 		else:
 			t = t+1
 	# or hurricaneList[h].trackPoints[0].time[5:7]!='08'
-	if len(hurricaneList[h].trackPoints) == 0 or not hurDel:
+	if len(hurricaneList[h].trackPoints) == 0 or hurDel:
 		del hurricaneList[h]
 	else:
 		h = h + 1
