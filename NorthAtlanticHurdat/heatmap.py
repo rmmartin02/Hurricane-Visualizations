@@ -16,7 +16,7 @@ hurricaneList = Hurricane.readData(sys.argv[1])
 
 print("Cleaning data")
 #remove landfall bias and adjust data
-times = ['18:00:00','12:00:00','00:00:00','06:00:00']
+times = ['0600','0000','1800','1200']
 removed = 0
 h = 0
 print(len(hurricaneList))
@@ -27,7 +27,9 @@ while h < len(hurricaneList):
 	while t < len(hurricaneList[h].trackPoints):
 	#t!=0
 		# or hurricaneList[h].trackPoints[t].pressure>900 or hurricaneList[h].trackPoints[t].pressure<800
-		if hurricaneList[h].trackPoints[t].time[10:] not in times or hurricaneList[h].trackPoints[t].wind<34.0:
+		# 
+		#hurricaneList[h].trackPoints[t].time not in times
+		if hurricaneList[h].trackPoints[t].recordID != 'L' or hurricaneList[h].trackPoints[t].wind<96.0:
 			removed += 1
 			del hurricaneList[h].trackPoints[t]
 		else:
@@ -107,7 +109,7 @@ print("Calculating data points")
 for h in hurricaneList:
 	for p in h.trackPoints:
 		try:
-			counts[int(round((p.latitude-minlat)*10))][int(round((p.longitude-minlong)*10))] = counts[int(round((p.latitude-minlat)*10))][int(round((p.longitude-minlong)*10))] + ((p.wind*p.wind)/10000)
+			counts[int(round((p.latitude-minlat)*10))][int(round((p.longitude-minlong)*10))] = counts[int(round((p.latitude-minlat)*10))][int(round((p.longitude-minlong)*10))] + 1
 		except IndexError:
 			aasdlkjfbakvl = 1
 #compress data so that it looks better on heatmap
@@ -165,6 +167,6 @@ top = top.resize(bottom.size)
 final = Image.alpha_composite(bottom, top)
 final = final.convert("RGB")
 if len(sys.argv)>3:
-	final.save("images/"+sys.argv[3])
+	final.save("images/HeatMaps/"+sys.argv[3])
 else:
 	final.show()

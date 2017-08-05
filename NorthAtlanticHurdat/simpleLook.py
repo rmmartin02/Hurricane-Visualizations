@@ -23,4 +23,11 @@ f.close()
 print(list)
 """
 hurricaneList = Hurricane.readData('hurdatFixed.csv')
-print(hurricaneList)
+times = {}
+for h in hurricaneList:
+	for p in h.trackPoints:
+		if p.time not in times:
+			times[p.time] = 1
+		else:
+			times[p.time] = times[p.time] + 1
+print(sorted(times.items(), key=lambda x:x[1]))

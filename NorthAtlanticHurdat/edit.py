@@ -6,6 +6,8 @@ with open('hurdat.csv','r') as file:
 			text[4] = text[4][:-1]
 			if text[5][-1] == 'W':
 				text[5] = '-' + text[5][:-1]
+				if float(text[5].replace(' ','')) < -180:
+					text[5] = str(round(float(text[5].replace(' ',''))+360,1))
 			else:
 				text[5] = text[5][:-1]
 		fullText.append(','.join(text))

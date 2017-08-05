@@ -14,7 +14,8 @@ print(len(hurricaneList))
 while h < len(hurricaneList):
 	t = 0
 	#164 is "cat 6"
-	hurDel = hurricaneList[h].getMaxWind()<164.0
+	hurDel = hurricaneList[h].didLandfall()
+	#hurDel = False
 	while t < len(hurricaneList[h].trackPoints):
 		#hurricaneList[h].trackPoints[t].time[10:] not in times
 		#hurricaneList[h].trackPoints[t].pressure>900 or hurricaneList[h].trackPoints[t].pressure<800
@@ -24,7 +25,7 @@ while h < len(hurricaneList):
 		else:
 			t = t+1
 	# or hurricaneList[h].trackPoints[0].time[5:7]!='08'
-	if len(hurricaneList[h].trackPoints) == 0 or hurDel:
+	if len(hurricaneList[h].trackPoints) == 0 or not hurDel:
 		del hurricaneList[h]
 	else:
 		h = h + 1
@@ -52,11 +53,12 @@ for hurricane in hurricaneList:
 		if (newlong>90 and oldPoint.longitude<-90) or (oldPoint.longitude>90 and newlong<-90):
 			print("over date line")
 		elif(oldPoint.getColor()!=(0,0,0)):
-			map.drawLine(oldPoint.getColor(),2,oldPoint.latitude,oldPoint.longitude,newlat,newlong)
+			map.drawLine(oldPoint.getColor(),1,oldPoint.latitude,oldPoint.longitude,newlat,newlong)
 		oldPoint = point
+print(maxlat,minlat,maxlong,minlong)
 map = map.getSubMap(maxlat, minlong, minlat, maxlong)
 map.mapImage = map.mapImage.convert("RGB")
 if len(sys.argv)>2:
-	map.save("images/"+sys.argv[2])
+	map.save("images/TrackLines/"+sys.argv[2])
 else:
 	map.view()
