@@ -95,6 +95,7 @@ class Hurricane:
 			return (61.8,-179.99,1.9,180.0)
 		if basin == 'sa':
 			return (-19.0,-50.1,-38.0,-30.5)
+		return (81.0,-180.0,-68.5,180.0)
 	
 	def readData(data):
 		hurricaneList = []
