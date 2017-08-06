@@ -22,12 +22,12 @@ h = 0
 print(len(hurricaneList))
 while h < len(hurricaneList):
 	t = 0
-	#delHur = hurricaneList[h].season<1980
-	delHur = False
+	delHur = hurricaneList[h].season<1970
+	#delHur = False
 	while t < len(hurricaneList[h].trackPoints):
 	#t!=0
 		# or hurricaneList[h].trackPoints[t].pressure>900 or hurricaneList[h].trackPoints[t].pressure<800
-		if hurricaneList[h].trackPoints[t].time[10:] not in times or hurricaneList[h].trackPoints[t].wind<34.0:
+		if hurricaneList[h].trackPoints[t].time[10:] not in times or hurricaneList[h].trackPoints[t].wind<34.0 or hurricaneList[h].trackPoints[t].time[8:10] != '12':
 			removed += 1
 			del hurricaneList[h].trackPoints[t]
 		else:

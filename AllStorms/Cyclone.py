@@ -77,6 +77,24 @@ class Hurricane:
 			if p.time[10:] in times and p.nature == 'TS' and p.wind>= 35.0:
 				ace += (p.wind * p.wind)/10000
 		return ace
+		
+	def getBasinCoords(basin):
+		if basin == 'all':
+			return (81.0,-180.0,-68.5,180.0)
+		if basin == 'na':
+			return (80.3,-109.5,7.2,28.0)
+		if basin == 'wp':
+			return (69.0,-179.97,0.1,179.99)
+		if basin == 'si':
+			return (-0.4,17.77,-48.7,135.22)
+		if basin == 'sp':
+			return (-3.2,-180.0,-68.5,180.0)
+		if basin == 'ni':
+			return (81.0,32.0,0.7,99.94)
+		if basin == 'ep':
+			return (61.8,-179.99,1.9,180.0)
+		if basin == 'sa':
+			return (-19.0,-50.1,-38.0,-30.5)
 	
 	def readData(data):
 		hurricaneList = []

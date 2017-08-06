@@ -2,16 +2,16 @@ import sys
 from Cyclone import Hurricane, TrackPoint
 	
 	
-
+"""
 hurricaneList = []
 
 with open('data/all.csv','r') as f:
 	for text in f:
 		text = text.replace(" ","").split(",")
-		if len(text)>13 and text[13] not in hurricaneList:
-			hurricaneList.append(text[13])
+		if text[6][8:10] not in hurricaneList:
+			hurricaneList.append(text[6][8:10])
 	print(hurricaneList)
-
+"""
 """
 timeDict = {}
 with open(sys.argv[1],'r') as f:
@@ -65,8 +65,14 @@ for hurricane in hurricaneList:
 		elif(newlong<minlong):
 			minlong = newlong
 print(maxlat,minlong,minlat,maxlong)
-#All 81.0 -180.0 -68.5 180.0
-#NA 80.3 -109.5 7.2 28.0
+#All	81.0 -180.0 -68.5 180.0
+#NA	80.3 -109.5 7.2 28.0
+#WP	69.0 -179.97 0.1 179.99
+#SI 	-0.4 17.77	-48.7	135.22
+#SP	-3.2 -180.0 -68.5 180.0
+#NI	81.0 32.0 0.7 99.94
+#EP	61.8 -179.99 1.9 180.0
+#SA	-19.0 -50.1 -38.0 -30.5
 """
 """
 hurricaneList = Hurricane.readData(sys.argv[1])
