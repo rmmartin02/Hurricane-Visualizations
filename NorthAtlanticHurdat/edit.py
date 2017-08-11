@@ -12,6 +12,6 @@ with open('hurdat.csv','r') as file:
 				text[5] = text[5][:-1]
 		fullText.append(','.join(text))
 	
-with open('hurdatFixed.csv','w') as file:
+with open('hurdat.csv','w') as file:
 	for line in fullText:
 		file.write(line.replace(' ','').replace('\t',''))

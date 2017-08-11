@@ -3,8 +3,8 @@ import numpy.random
 import matplotlib.pyplot as plt
 import matplotlib
 import sys
-from Map import Map
-from Cyclone import Hurricane, TrackPoint
+from Tools.Map import Map
+from Tools.Cyclone import Hurricane, TrackPoint
 from PIL import Image
 	
 
@@ -42,7 +42,7 @@ while h < len(hurricaneList):
 print("Removed " + str(removed) + " points from data")
 print(len(hurricaneList))
 		
-map = Map("images/worldMap.jpg", 90.0, -180.0, -90.0, 180.0)
+map = Map("data/worldMap.jpg", 90.0, -180.0, -90.0, 180.0)
 maxlat = -180
 maxlong = -90
 minlat = 180
@@ -138,11 +138,11 @@ print("Plotting")
 colormap = 'YlOrRd'
 
 data = np.array(compressed)
-plt.imsave("images/heatmap.png",data,format = "png", origin = 'lower',cmap = colormap)
+plt.imsave("data/heatmap.png",data,format = "png", origin = 'lower',cmap = colormap)
 
 print("Imposing heatmap over map")
 #impose heatmap over map image
-top = Image.open('images/heatmap.png')
+top = Image.open('data/heatmap.png')
 bottom = map.mapImage
 top = top.convert("RGBA")
 top.putalpha(128)
@@ -165,6 +165,6 @@ top = top.resize(bottom.size)
 final = Image.alpha_composite(bottom, top)
 final = final.convert("RGB")
 if len(sys.argv)>3:
-	final.save("images/"+sys.argv[3])
+	final.save("AllStorms/images/Heatmaps"+sys.argv[3])
 else:
 	final.show()

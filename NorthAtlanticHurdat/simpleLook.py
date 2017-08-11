@@ -23,7 +23,7 @@ f.close()
 print(list)
 """
 """
-hurricaneList = Hurricane.readData('hurdatFixed.csv')
+hurricaneList = Hurricane.readData('hurdat.csv')
 times = {}
 for h in hurricaneList:
 	for p in h.trackPoints:
@@ -33,7 +33,7 @@ for h in hurricaneList:
 			times[p.time] = times[p.time] + 1
 print(sorted(times.items(), key=lambda x:x[1]))
 """
-hurricaneList = Hurricane.readData('hurdatFixed.csv')
+hurricaneList = Hurricane.readData('hurdat.csv')
 land = {}
 for h in hurricaneList:
 	for p in h.trackPoints:
