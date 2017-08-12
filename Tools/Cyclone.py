@@ -14,12 +14,12 @@ class TrackPoint:
 			self.trackType = trackType
 			self.currentBasin = currentBasin
 
-		def __init__(self, hurricane, date, time, recordID, status, latitude, longitude, wind, pressure, ne34, se34, sw34, nw34, ne50, se50, sw50, nw50, ne64, se64, sw64, nw64):
+		def __init__(self, hurricane, date, time, recordID, nature, latitude, longitude, wind, pressure, ne34, se34, sw34, nw34, ne50, se50, sw50, nw50, ne64, se64, sw64, nw64):
 			self.hurricane = hurricane
 			self.date = date
 			self.time = time
 			self.recordID = recordID
-			self.status = status
+			self.nature = nature
 			self.latitude = latitude
 			self.longitude = longitude
 			self.wind = wind
@@ -105,10 +105,10 @@ class Hurricane:
 		return min
 		
 	def getACE(self):
-		times = ['18:00:00','12:00:00','00:00:00','06:00:00']
+		times = ['18:00:00','12:00:00','00:00:00','06:00:00','0000','0600','1200','1800']
 		ace = 0.0
 		for p in self.trackPoints:
-			if p.time[10:] in times and p.nature == 'TS' and p.wind>= 35.0:
+			if (p.time[10:] in times or p.time in times) and (p.nature == 'TS' or p.nature=='HU') and p.wind>= 35.0:
 				ace += (p.wind * p.wind)/10000
 		return ace
 		

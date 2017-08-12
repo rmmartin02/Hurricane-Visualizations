@@ -1,5 +1,6 @@
 import sys
-from Cyclone import Hurricane, TrackPoint
+from Tools.Cyclone import Hurricane, TrackPoint
+hurricaneList = Hurricane.readHurdat()
 """	
 hurricaneList = []
 list = []
@@ -33,7 +34,8 @@ for h in hurricaneList:
 			times[p.time] = times[p.time] + 1
 print(sorted(times.items(), key=lambda x:x[1]))
 """
-hurricaneList = Hurricane.readData('hurdat.csv')
+"""
+hurricaneList = Hurricane.readHurdat()
 land = {}
 for h in hurricaneList:
 	for p in h.trackPoints:
@@ -44,3 +46,54 @@ for h in hurricaneList:
 			else:
 				land[ser] = 1
 print(sorted(land.items(), key=lambda x:x[1]))
+"""
+"""
+year = {}
+for h in hurricaneList:
+	if h.season not in year:
+		year[h.season] = 0
+	year[h.season] = year[h.season] + h.getACE()
+	year[h.season] = round(year[h.season],3)
+print(sorted(year.items(), key=lambda x:x[1]))
+"""
+tropCount = {}
+hurCount = {}
+majCount = {}
+for h in hurricaneList:
+	if h.season not in tropCount:
+		tropCount[h.season] = 0
+	if h.season not in hurCount:
+		hurCount[h.season] = 0
+	if h.season not in majCount:
+		majCount[h.season] = 0
+	ts = False
+	hur = False
+	maj = False
+	for p in h.trackPoints:
+		if p.nature=='TS':
+			ts = True
+		if p.nature=='HU':
+			hur = True
+		if p.wind>=96.0:
+			maj = True
+	if ts:
+		tropCount[h.season] = tropCount[h.season] + 1
+	if hur:
+		hurCount[h.season] = hurCount[h.season] + 1
+	if maj:
+		majCount[h.season] = majCount[h.season] + 1
+print(sorted(tropCount.items(), key=lambda x:x[1]))
+print(sorted(hurCount.items(), key=lambda x:x[1]))
+print(sorted(majCount.items(), key=lambda x:x[1]))
+tropArr = []
+hurArr = []
+majArr = []
+for key in tropCount:
+	tropArr.append(tropCount[key])
+for key in hurCount:
+	hurArr.append(hurCount[key])
+for key in majCount:
+	majArr.append(majCount[key])
+print(sum(tropArr)//len(tropArr),tropArr[len(tropArr)//2])
+print(sum(hurArr)//len(hurArr),hurArr[len(hurArr)//2])
+print(sum(majArr)//len(majArr),majArr[len(majArr)//2])
