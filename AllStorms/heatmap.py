@@ -24,16 +24,29 @@ while h < len(hurricaneList):
 	t = 0
 	delHur = hurricaneList[h].season<1970
 	#delHur = False
+	found = False
 	while t < len(hurricaneList[h].trackPoints):
-	#t!=0
+		if hurricaneList[h].trackPoints[t].wind >= 34 and not found:
+			found = True
+			hurricaneList[h].trackPoints[t].latitude = round(hurricaneList[h].trackPoints[t].latitude, 1)
+			hurricaneList[h].trackPoints[t].longitude = round(hurricaneList[h].trackPoints[t].longitude, 1)
+			t += 1
+
+		else:
+			removed += 1
+			del hurricaneList[h].trackPoints[t]
+		#t!=0
 		# or hurricaneList[h].trackPoints[t].pressure>900 or hurricaneList[h].trackPoints[t].pressure<800
-		if hurricaneList[h].trackPoints[t].time[10:] not in times or hurricaneList[h].trackPoints[t].wind<34.0 or hurricaneList[h].trackPoints[t].time[8:10] != '12':
+		#hurricaneList[h].trackPoints[t].time[10:] not in times
+		"""
+		if hurricaneList[h].trackPoints[t].wind <34 or found:
 			removed += 1
 			del hurricaneList[h].trackPoints[t]
 		else:
 			hurricaneList[h].trackPoints[t].latitude = round(hurricaneList[h].trackPoints[t].latitude,1)
 			hurricaneList[h].trackPoints[t].longitude = round(hurricaneList[h].trackPoints[t].longitude,1)
 			t = t+1
+		"""
 	#or hurricaneList[h].trackPoints[0].time[5:7]!='07'
 	if len(hurricaneList[h].trackPoints) == 0 or delHur:
 		del hurricaneList[h]

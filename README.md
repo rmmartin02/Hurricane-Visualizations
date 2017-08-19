@@ -14,7 +14,7 @@ Much of the data before the 1960s is from ships, aircraft, and weather stations.
 ### Heatmaps
 Can edit heatmap.py to look at all sorts of different data. It takes it and maps it on the worldMap image provided. Data needs to be compressed by some factor, otherwise it is too spread out. Can also look at basins separately.
 This image is a heatmap of the accumulated cyclone energy (wind*wind/100000) for storms with winds >34kt
-Command Looks like: python -m AllStorms.heatmaps all.csv 16 ACE.jpg
+Command Looks like: python -m AllStorms.heatmap all.csv 16 ACE.jpg
 <img src="https://raw.githubusercontent.com/rmmartin02/Hurricane-Visualizations/master/Wallpapers/ACEHeatmap.jpg" alt="ACE heatmap" >
 
 ### Track Maps

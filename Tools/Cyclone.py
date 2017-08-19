@@ -2,8 +2,9 @@ class TrackPoint:
 
 		Colors = {'ET' : (170,170,170),'TD' : (28,84,255),'TS' : (109,195,67),'C1' : (255,195,9),'C2' : (255,115,9),'C3' : (232,59,12),'C4' : (232,12,174),'C5' : (189,0,255)}
 		
-		def __init__(self, hurricane, time, nature, latitude, longitude, wind, pressure, center, trackType, currentBasin):
+		def __init__(self, hurricane, date, time, nature, latitude, longitude, wind, pressure, center=None, trackType=None, currentBasin=None, ne34=None, se34=None, sw34=None, nw34=None, ne50=None, se50=None, sw50=None, nw50=None, ne64=None, se64=None, sw64=None, nw64=None):
 			self.hurricane = hurricane
+			self.date = date
 			self.time = time
 			self.nature = nature
 			self.latitude = latitude
@@ -13,17 +14,6 @@ class TrackPoint:
 			self.center = center
 			self.trackType = trackType
 			self.currentBasin = currentBasin
-
-		def __init__(self, hurricane, date, time, recordID, nature, latitude, longitude, wind, pressure, ne34, se34, sw34, nw34, ne50, se50, sw50, nw50, ne64, se64, sw64, nw64):
-			self.hurricane = hurricane
-			self.date = date
-			self.time = time
-			self.recordID = recordID
-			self.nature = nature
-			self.latitude = latitude
-			self.longitude = longitude
-			self.wind = wind
-			self.pressure = pressure
 			self.ne34 = ne34
 			self.se34 = se34
 			self.sw34 = sw34
@@ -67,15 +57,16 @@ class TrackPoint:
 
 class Hurricane:
 
-	def __init__(self, serialNumber, season, num, basin, subBasin, name):
+	def __init__(self, serialNumber = None, season = None, num = None, basin = None, subBasin = None, name= None, numPoints = None):
 		self.serialNumber = serialNumber
 		self.season = season
 		self.num = num
 		self.basin = basin
 		self.subBasin = subBasin
 		self.name = name
+		self.numPoints = numPoints
 		self.trackPoints = []
-
+	""""
 	def __init__(self, basin, num, season, name, numPoints):
 		self.basin = basin
 		self.num = num
@@ -83,11 +74,11 @@ class Hurricane:
 		self.name = name
 		self.numPoints = numPoints
 		self.trackPoints = []
-		
+	"""
 	def addTrackPoint(self, hurricane, time, nature, latitude, longitude, wind, pressure, center, trackType, currentBasin):
 		self.trackPoints.append(TrackPoint(hurricane, time, nature, latitude, longitude, wind, pressure, center, trackType, currentBasin))
 		
-	def addTrackPoint(self, date, time, recordID, nature, latitude, longitude, wind, pressure, ne34, se34, sw34, nw34,ne50, se50, sw50, nw50, ne64, se64, sw64, nw64):
+	def addHurdatTrackPoint(self, date, time, recordID, nature, latitude, longitude, wind, pressure, ne34, se34, sw34, nw34,ne50, se50, sw50, nw50, ne64, se64, sw64, nw64):
 		self.trackPoints.append(TrackPoint(self, date, time, recordID, nature, latitude, longitude, wind, pressure, ne34, se34, sw34, nw34,ne50, se50, sw50, nw50, ne64, se64, sw64, nw64))
 	
 	def getMaxWind(self):
@@ -130,7 +121,8 @@ class Hurricane:
 		if basin == 'sa':
 			return (-19.0,-50.1,-38.0,-30.5)
 		return (81.0,-180.0,-68.5,180.0)
-	
+
+	@staticmethod
 	def readData(data):
 		hurricaneList = []
 		with open('data/' + data,'r') as f:
@@ -141,10 +133,11 @@ class Hurricane:
 				if(text[0] != tempSerNum):
 					hurrNum += 1
 					#serialNumber, season, num, basin, subBasin, name
-					hurricaneList.append(Hurricane(text[0], int(text[1]), int(text[2]), text[3], text[4], text[5]))
+					hurricaneList.append(Hurricane(serialNumber = text[0], season = int(text[1]), num = int(text[2]), basin = text[3], subBasin = text[4], name = text[5]))
 					tempSerNum = text[0]
 				#hurricane, time, nature, latitude, longitude, wind, pressure, center, trackType
-				time = text[6]
+				date = text[6][:10]
+				time = text[6][10:]
 				nature = text[7]
 				latitude = float(text[8])
 				longitude = float(text[9])
@@ -153,7 +146,7 @@ class Hurricane:
 				center =  text[12]
 				trackType = text[13]
 				currentBasin = text[14]
-				hurricaneList[hurrNum].addTrackPoint(hurricaneList[hurrNum], time, nature, latitude, longitude, wind, pressure, center, trackType, currentBasin)
+				hurricaneList[hurrNum].trackPoints.append(TrackPoint(hurricaneList[hurrNum], date, time, nature, latitude, longitude, wind, pressure,  center=center, trackType=trackType, currentBasin=currentBasin))
 		return hurricaneList
 
 	def didLandfall(self):
@@ -188,7 +181,8 @@ class Hurricane:
 			text = line.split(',')
 			if len(text) < 10:
 				hurrNum += 1
-				hurricaneList.append(Hurricane(text[0][:2], int(text[0][2:4]), int(text[0][4:]), text[1], int(text[2])))
+				#basin, num, season, name, numPoints
+				hurricaneList.append(Hurricane(basin=text[0][:2], num=int(text[0][2:4]), season=int(text[0][4:]), name=text[1], numPoints=int(text[2])))
 			else:
 				date = text[0]
 				time = text[1]
@@ -210,7 +204,7 @@ class Hurricane:
 				se64 = int(text[17])
 				sw64 = int(text[18])
 				nw64 = int(text[19])
-				hurricaneList[hurrNum].addTrackPoint(date, time, recordID, nature, latitude, longitude, wind, pressure,ne34, se34, sw34, nw34, ne50, se50, sw50, nw50, ne64, se64, sw64, nw64)
+				hurricaneList[hurrNum].trackPoints.append(TrackPoint(date, time, recordID, nature, latitude, longitude, wind, pressure, ne34=ne34, se34=se34, sw34=sw34, nw34=nw34, ne50=ne50, se50=se50, sw50=sw50, nw50=nw50, ne64=ne64, se64=se64, sw64=sw64, nw64=nw64))
 			line = f.readline()
 		f.close()
 		return hurricaneList
